@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreditWise AI - Credit Risk Intelligence</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>CreditWise<span>.AI</span></h1>
+                    <p>Creditworthiness Engine</p>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="dashboard">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Overview Dashboard</span>
+                </button>
+                <button class="nav-item" data-tab="benchmarking" id="nav-benchmarking">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Model Evaluation</span>
+                </button>
+                <button class="nav-item" data-tab="calculator">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span>Risk Calculator</span>
+                </button>
+            </nav>
+            
+            <div class="dataset-info-card">
+                <h3>Active Dataset</h3>
+                <div class="info-row">
+                    <span>Records:</span>
+                    <strong id="sidebar-total-records">-</strong>
+                </div>
+                <div class="info-row">
+                    <span>Default Rate:</span>
+                    <strong id="sidebar-default-rate">-</strong>
+                </div>
+                <div class="status-indicator">
+                    <span class="dot pulse"></span>
+                    <span>Systems Operational</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h2 id="page-title">Overview Dashboard</h2>
+                    <p id="page-description">Statistical analysis and EDA of credit history records</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="btn-retrain-models">
+                        <i class="fa-solid fa-rotate"></i>
+                        <span>Train & Fit Models</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- TABS CONTENT -->
+            <div class="content-wrapper">
+                
+                <!-- Tab: Dashboard -->
+                <section class="tab-content active" id="tab-dashboard">
+                    <!-- Dashboard Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon-wrapper blue">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">Total Credit Profiles</span>
+                                <h3 class="stat-val" id="stat-total-profiles">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-wrapper green">
+                                <i class="fa-solid fa-user-check"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">Creditworthy Profiles</span>
+                                <h3 class="stat-val" id="stat-creditworthy">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-wrapper red">
+                                <i class="fa-solid fa-user-xmark"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">Default Profiles</span>
+                                <h3 class="stat-val" id="stat-defaults">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-wrapper orange">
+                                <i class="fa-solid fa-percent"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">Base Default Risk</span>
+                                <h3 class="stat-val" id="stat-risk-rate">0.0%</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dataset Configuration Control Card -->
+                    <div class="glass-card dataset-config-card" style="margin-bottom: 30px;">
+                        <div class="card-header">
+                            <h3>Dataset Configuration Engine</h3>
+                            <p>Adjust data distribution parameters and programmatically regenerate the credit records database</p>
+                        </div>
+                        <form id="dataset-config-form" class="dataset-config-form">
+                            <div class="config-flex-row">
+                                <div class="config-item">
+                                    <label for="config-size">Profile Size: <strong id="size-lbl-val">5,000</strong> records</label>
+                                    <input type="range" id="config-size" name="size" min="1000" max="10000" step="500" value="5000">
+                                </div>
+                                <div class="config-item">
+                                    <label for="config-noise">Label Flipped Noise: <strong id="noise-lbl-val">15%</strong></label>
+                                    <input type="range" id="config-noise" name="noise" min="0" max="0.5" step="0.05" value="0.15">
+                                </div>
+                                <div class="config-item">
+                                    <label for="config-risk-level">Baseline Risk Profile</label>
+                                    <select id="config-risk-level" name="risk_level">
+                                        <option value="low">Conservative Risk (Lower Default Base)</option>
+                                        <option value="balanced" selected>Standard Balanced (Average Default Base)</option>
+                                        <option value="high">Aggressive Risk (Higher Default Base)</option>
+                                    </select>
+                                </div>
+                                <div class="config-item btn-item">
+                                    <button type="submit" class="btn btn-accent btn-full" id="btn-regenerate-submit">
+                                        <i class="fa-solid fa-sync"></i>
+                                        <span>Apply & Rebuild</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- EDA Charts Section -->
+                    <div class="charts-grid-row">
+                        <div class="glass-card chart-container">
+                            <div class="card-header">
+                                <h3>Credit Score Distribution vs. Default</h3>
+                                <p>Default rates across FICO ranges</p>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="chart-credit-score"></canvas>
+                            </div>
+                        </div>
+                        <div class="glass-card chart-container">
+                            <div class="card-header">
+                                <h3>Debt-To-Income (DTI) Ratio vs. Default</h3>
+                                <p>Financial stress and its default correlation</p>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="chart-dti"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid-row second">
+                        <div class="glass-card chart-container wide">
+                            <div class="card-header">
+                                <h3>Home Ownership Impact</h3>
+                                <p>Borrower defaults grouped by home status</p>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="chart-home"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab: Model Benchmarking -->
+                <section class="tab-content" id="tab-benchmarking">
+                    <!-- Training Prompt / Loading State -->
+                    <div class="training-required-alert" id="training-alert">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <h3>Model Needs Initialization</h3>
+                        <p>To evaluate performance statistics and run predictions, we must first train the optimized Random Forest classifier on the dataset.</p>
+                        <button class="btn btn-accent" id="btn-train-action">
+                            <i class="fa-solid fa-gears"></i>
+                            <span>Train Credit Scoring Model</span>
+                        </button>
+                    </div>
+
+                    <div class="model-results-wrapper hidden" id="model-results">
+                        <!-- Model Cards Comparison -->
+                        <div class="models-grid" id="models-metrics-cards">
+                            <!-- Dynamically generated model comparison cards -->
+                        </div>
+
+                        <!-- ROC Curve and Feature Importance Chart -->
+                        <div class="charts-grid-row">
+                            <div class="glass-card chart-container">
+                                <div class="card-header">
+                                    <h3>Receiver Operating Characteristic (ROC) Curve</h3>
+                                    <p>ROC-AUC performance of the optimized Random Forest model</p>
+                                </div>
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-roc"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card chart-container">
+                                <div class="card-header">
+                                    <h3>Feature Importance Weights</h3>
+                                    <p>Predictive impact of variables on the Random Forest decision tree nodes</p>
+                                </div>
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-importance"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Confusion Matrix -->
+                        <div class="confusion-matrix-section">
+                            <div class="section-title">
+                                <h3>Confusion Matrix</h3>
+                                <p>Model classification breakdown on the test set (20%)</p>
+                            </div>
+                            <div class="cm-grid" id="confusion-matrix-grid">
+                                <!-- Dynamically generated confusion matrix -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab: Credit Risk Calculator -->
+                <section class="tab-content" id="tab-calculator">
+                    <!-- Train Warning -->
+                    <div class="training-required-alert" id="calc-training-alert">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <h3>Models Need Initialization</h3>
+                        <p>Please train the classification models first in the Benchmark or Overview tab before running individual predictions.</p>
+                    </div>
+
+                    <div class="calculator-layout hidden" id="calc-layout">
+                        <!-- Calculator Form -->
+                        <div class="glass-card calc-form-card" id="calc-form-container">
+                            <div class="card-header">
+                                <div class="header-split-row">
+                                    <div>
+                                        <h3>Applicant Profile Input</h3>
+                                        <p>Provide details to estimate risk and creditworthiness</p>
+                                    </div>
+                                    <div class="toggle-switch-container">
+                                        <label class="switch-lbl">
+                                            <input type="checkbox" id="toggle-compare-mode">
+                                            <span class="slider-toggle"></span>
+                                        </label>
+                                        <span class="switch-text">Compare 2 Profiles</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <form id="credit-form" class="credit-input-form">
+                                <div class="forms-split-layout">
+                                    <!-- Column A -->
+                                    <div class="form-column" id="form-col-a">
+                                        <h4 class="form-column-header">Applicant A</h4>
+                                        <div class="form-grid compact">
+                                            <div class="form-group">
+                                                <label for="input-age">Age (Years)</label>
+                                                <input type="number" id="input-age" name="Age" min="18" max="100" value="35" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-income">Annual Income ($)</label>
+                                                <input type="number" id="input-income" name="Income" min="5000" max="1000000" value="65000" step="1000" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-emp-years">Employment (Years)</label>
+                                                <input type="number" id="input-emp-years" name="EmploymentYears" min="0" max="60" value="5.0" step="0.5" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-home">Home Status</label>
+                                                <select id="input-home" name="HomeOwnership" required>
+                                                    <option value="MORTGAGE">Mortgage</option>
+                                                    <option value="RENT" selected>Rent</option>
+                                                    <option value="OWN">Own Home</option>
+                                                    <option value="OTHER">Other</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-credit-score">Credit Score (FICO)</label>
+                                                <input type="number" id="input-credit-score" name="CreditScore" min="300" max="850" value="680" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-dti">DTI Ratio</label>
+                                                <input type="number" id="input-dti" name="DebtToIncomeRatio" min="0.0" max="1.0" value="0.25" step="0.01" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-late-payments">Late Payments (2y)</label>
+                                                <input type="number" id="input-late-payments" name="PaymentHistory" min="0" max="24" value="0" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-loan-amount">Loan Requested ($)</label>
+                                                <input type="number" id="input-loan-amount" name="LoanAmount" min="500" max="500000" value="15000" step="500" required>
+                                            </div>
+                                            <div class="form-group full-width">
+                                                <label for="input-purpose">Primary Loan Purpose</label>
+                                                <select id="input-purpose" name="LoanPurpose" required>
+                                                    <option value="DEBT_CONSOLIDATION" selected>Debt Consolidation</option>
+                                                    <option value="HOME_IMPROVEMENT">Home Improvement</option>
+                                                    <option value="VENTURE">Business / Venture</option>
+                                                    <option value="EDUCATION">Education</option>
+                                                    <option value="PERSONAL">Personal / Household</option>
+                                                    <option value="MEDICAL">Medical Expense</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Column B -->
+                                    <div class="form-column hidden" id="form-col-b">
+                                        <h4 class="form-column-header">Applicant B</h4>
+                                        <div class="form-grid compact">
+                                            <div class="form-group">
+                                                <label for="input-age-b">Age (Years)</label>
+                                                <input type="number" id="input-age-b" name="Age_B" min="18" max="100" value="28">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-income-b">Annual Income ($)</label>
+                                                <input type="number" id="input-income-b" name="Income_B" min="5000" max="1000000" value="42000" step="1000">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-emp-years-b">Employment (Years)</label>
+                                                <input type="number" id="input-emp-years-b" name="EmploymentYears_B" min="0" max="60" value="2.0" step="0.5">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-home-b">Home Status</label>
+                                                <select id="input-home-b" name="HomeOwnership_B">
+                                                    <option value="MORTGAGE">Mortgage</option>
+                                                    <option value="RENT" selected>Rent</option>
+                                                    <option value="OWN">Own Home</option>
+                                                    <option value="OTHER">Other</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-credit-score-b">Credit Score (FICO)</label>
+                                                <input type="number" id="input-credit-score-b" name="CreditScore_B" min="300" max="850" value="610">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-dti-b">DTI Ratio</label>
+                                                <input type="number" id="input-dti-b" name="DebtToIncomeRatio_B" min="0.0" max="1.0" value="0.45" step="0.01">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-late-payments-b">Late Payments (2y)</label>
+                                                <input type="number" id="input-late-payments-b" name="PaymentHistory_B" min="0" max="24" value="2">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input-loan-amount-b">Loan Requested ($)</label>
+                                                <input type="number" id="input-loan-amount-b" name="LoanAmount_B" min="500" max="500000" value="20000" step="500">
+                                            </div>
+                                            <div class="form-group full-width">
+                                                <label for="input-purpose-b">Primary Loan Purpose</label>
+                                                <select id="input-purpose-b" name="LoanPurpose_B">
+                                                    <option value="DEBT_CONSOLIDATION">Debt Consolidation</option>
+                                                    <option value="HOME_IMPROVEMENT">Home Improvement</option>
+                                                    <option value="VENTURE">Business / Venture</option>
+                                                    <option value="EDUCATION">Education</option>
+                                                    <option value="PERSONAL" selected>Personal / Household</option>
+                                                    <option value="MEDICAL">Medical Expense</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-accent btn-full" id="btn-predict" style="margin-top: 15px;">
+                                    <i class="fa-solid fa-fingerprint"></i>
+                                    <span>Run Credit Decision</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Results display -->
+                        <div class="glass-card calc-result-card" id="calc-results-card">
+                            <div class="card-header">
+                                <h3>Decision Summary</h3>
+                                <p>Predictive scorecards across algorithmic models</p>
+                            </div>
+                            
+                            <!-- Initial state prompt -->
+                            <div class="result-prompt-placeholder" id="result-placeholder">
+                                <i class="fa-solid fa-robot"></i>
+                                <h4>Awaiting Input</h4>
+                                <p>Fill in applicant details and click 'Run Credit Decision' to generate classification outcomes.</p>
+                            </div>
+
+                            <!-- Single Result Panel -->
+                            <div class="result-content hidden" id="result-actual-content">
+                                <!-- Status Card -->
+                                <div class="decision-status-box success" id="decision-status">
+                                    <div class="status-header">
+                                        <span class="badge" id="decision-badge">Approved</span>
+                                        <i class="fa-solid fa-circle-check" id="decision-icon"></i>
+                                    </div>
+                                    <h2 id="decision-statement">Applicant demonstrates high creditworthiness.</h2>
+                                    <p id="decision-subtext">Low default probability detected across models.</p>
+                                </div>
+
+                                <!-- Probability Gauge and Models -->
+                                <div class="result-breakdown-row">
+                                    <div class="gauge-column">
+                                        <div class="gauge-header">
+                                            <span>Default Probability</span>
+                                            <strong id="overall-probability-text">14.5%</strong>
+                                        </div>
+                                        <div class="gauge-bar-outer">
+                                            <div class="gauge-bar-inner success" id="overall-probability-bar" style="width: 14.5%;"></div>
+                                        </div>
+                                        <p class="gauge-footer" id="overall-risk-level">Risk Level: Low Risk</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="models-prob-row" id="models-predictions-list">
+                                    <!-- Predictions from different models will be generated dynamically -->
+                                </div>
+
+                                <!-- Local explanation bar chart -->
+                                <div class="explanation-chart-container">
+                                    <h4>Risk Contribution Factors</h4>
+                                    <p class="chart-desc">Positive values increase risk, negative values reduce risk</p>
+                                    <div class="chart-wrapper mini">
+                                        <canvas id="chart-explanation"></canvas>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary btn-full" id="btn-export-report" style="margin-top: 15px;">
+                                    <i class="fa-solid fa-file-arrow-down"></i>
+                                    <span>Download Credit Report</span>
+                                </button>
+                            </div>
+
+                            <!-- Side-by-Side Compare Result Panel -->
+                            <div class="result-content-compare hidden" id="result-compare-content">
+                                <div class="compare-results-grid">
+                                    <!-- Applicant A Column -->
+                                    <div class="compare-result-col">
+                                        <h4 class="compare-col-header">Applicant A</h4>
+                                        <div class="decision-status-box success" id="decision-status-a">
+                                            <div class="status-header">
+                                                <span class="badge" id="decision-badge-a">Approved</span>
+                                                <i class="fa-solid fa-circle-check" id="decision-icon-a"></i>
+                                            </div>
+                                            <h2 id="decision-statement-a" style="font-size: 16px;">Approved</h2>
+                                            <p id="decision-subtext-a" style="font-size: 11px;">Low default probability.</p>
+                                        </div>
+                                        
+                                        <div class="gauge-column" style="margin-top: 15px;">
+                                            <div class="gauge-header">
+                                                <span>Default Prob</span>
+                                                <strong id="overall-probability-text-a">0.0%</strong>
+                                            </div>
+                                            <div class="gauge-bar-outer">
+                                                <div class="gauge-bar-inner success" id="overall-probability-bar-a" style="width: 0%;"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="compare-models-details" id="models-predictions-list-a"></div>
+                                    </div>
+                                    
+                                    <!-- Applicant B Column -->
+                                    <div class="compare-result-col">
+                                        <h4 class="compare-col-header">Applicant B</h4>
+                                        <div class="decision-status-box danger" id="decision-status-b">
+                                            <div class="status-header">
+                                                <span class="badge" id="decision-badge-b">Declined</span>
+                                                <i class="fa-solid fa-circle-xmark" id="decision-icon-b"></i>
+                                            </div>
+                                            <h2 id="decision-statement-b" style="font-size: 16px;">Declined</h2>
+                                            <p id="decision-subtext-b" style="font-size: 11px;">High default probability.</p>
+                                        </div>
+                                        
+                                        <div class="gauge-column" style="margin-top: 15px;">
+                                            <div class="gauge-header">
+                                                <span>Default Prob</span>
+                                                <strong id="overall-probability-text-b">0.0%</strong>
+                                            </div>
+                                            <div class="gauge-bar-outer">
+                                                <div class="gauge-bar-inner danger" id="overall-probability-bar-b" style="width: 0%;"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="compare-models-details" id="models-predictions-list-b"></div>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary btn-full" id="btn-export-report-compare" style="margin-top: 25px;">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    <span>Download Comparative Report</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- Spinner Loading Overlay -->
+    <div class="loading-overlay hidden" id="global-loader">
+        <div class="spinner-container">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+            <p id="loader-text">Loading...</p>
+        </div>
+    </div>
+
+    <!-- ChartJS and App JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
